@@ -53,6 +53,7 @@ BarBotGuiTest myMain;
             motor.setShutdownOptions(true, PinState.LOW);
 
             motor.pulse(duration); // set second argument to 'true' use a blocking call
+            Thread.sleep(duration); 
             myMain.setwait(false, this);
         } catch (Exception e)   {
             myMain.setwait(false, this);
