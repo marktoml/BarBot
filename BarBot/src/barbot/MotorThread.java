@@ -31,7 +31,7 @@ BarBotGuiTest myMain;
        duration = runTime;
        gpio = Gpio;
        motor = Motor;
-      myMain = Main;  
+       myMain = Main;  
     }
      protected void finalize() {
          //var
@@ -52,7 +52,7 @@ BarBotGuiTest myMain;
             myMain.setwait(true, this);
             motor.setShutdownOptions(true, PinState.LOW);
 
-            motor.pulse(duration, true); // set second argument to 'true' use a blocking call
+            motor.pulse(duration); // set second argument to 'true' use a blocking call
             myMain.setwait(false, this);
         } catch (Exception e)   {
             myMain.setwait(false, this);
