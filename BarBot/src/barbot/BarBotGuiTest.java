@@ -40,9 +40,9 @@ import javax.swing.JOptionPane;
 public class BarBotGuiTest extends javax.swing.JFrame {
     
     Properties properties = new Properties();
-    MotorThread[] motors = new MotorThread[5];
-    String[] motorpin = new String[5];
-    String[] ingrediants = new String[5];
+    MotorThread[] motorThrdAry = new MotorThread[7];
+    String[] motorpin = new String[7];
+    String[] ingrediants = new String[7];
     String readOne;
     ArrayList<String> recipes = new ArrayList<>();
     Queue drinkQ = new LinkedList();
@@ -52,7 +52,7 @@ public class BarBotGuiTest extends javax.swing.JFrame {
     int activeIngredient = 0;
     
     GpioController gpio;
-    GpioPinDigitalOutput[] motor = new GpioPinDigitalOutput[5];
+    GpioPinDigitalOutput[] motor_IO = new GpioPinDigitalOutput[7];
     private final Cursor waitCursor = new Cursor(Cursor.WAIT_CURSOR);
     private final Cursor defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
     private boolean waitCursorIsShowing;
@@ -93,12 +93,24 @@ public class BarBotGuiTest extends javax.swing.JFrame {
             motorpin[4] = "GPIO 25";
             properties.setProperty("motor5pin", motorpin[4]);
         }
+        motorpin[5] = properties.getProperty("motor6pin");
+        if(motorpin[5] == null){
+            motorpin[5] = "GPIO 27";
+            properties.setProperty("motor6pin", motorpin[5]);
+        }
+        motorpin[6] = properties.getProperty("motor7pin");
+        if(motorpin[6] == null){
+            motorpin[6] = "GPIO 29";
+            properties.setProperty("motor7pin", motorpin[6]);
+        }
         
         ingrediants[0] = properties.getProperty("ingrediant1");
         ingrediants[1] = properties.getProperty("ingrediant2");
         ingrediants[2] = properties.getProperty("ingrediant3");
         ingrediants[3] = properties.getProperty("ingrediant4");
         ingrediants[4] = properties.getProperty("ingrediant5");
+        ingrediants[5] = properties.getProperty("ingrediant6");
+        ingrediants[6] = properties.getProperty("ingrediant7");
         
         
         do {
@@ -120,11 +132,13 @@ public class BarBotGuiTest extends javax.swing.JFrame {
         RecipeList.setListData(recipeList);
         SaveProperties();
         
-        motor[0] = gpio.provisionDigitalOutputPin(RaspiPin.getPinByName(motorpin[0]), "motor", PinState.LOW);
-        motor[1] = gpio.provisionDigitalOutputPin(RaspiPin.getPinByName(motorpin[1]), "motor", PinState.LOW);
-        motor[2] = gpio.provisionDigitalOutputPin(RaspiPin.getPinByName(motorpin[2]), "motor", PinState.LOW);
-        motor[3] = gpio.provisionDigitalOutputPin(RaspiPin.getPinByName(motorpin[3]), "motor", PinState.LOW);
-        motor[4] = gpio.provisionDigitalOutputPin(RaspiPin.getPinByName(motorpin[4]), "motor", PinState.LOW);
+        motor_IO[0] = gpio.provisionDigitalOutputPin(RaspiPin.getPinByName(motorpin[0]), "motor", PinState.LOW);
+        motor_IO[1] = gpio.provisionDigitalOutputPin(RaspiPin.getPinByName(motorpin[1]), "motor", PinState.LOW);
+        motor_IO[2] = gpio.provisionDigitalOutputPin(RaspiPin.getPinByName(motorpin[2]), "motor", PinState.LOW);
+        motor_IO[3] = gpio.provisionDigitalOutputPin(RaspiPin.getPinByName(motorpin[3]), "motor", PinState.LOW);
+        motor_IO[4] = gpio.provisionDigitalOutputPin(RaspiPin.getPinByName(motorpin[4]), "motor", PinState.LOW);
+        motor_IO[5] = gpio.provisionDigitalOutputPin(RaspiPin.getPinByName(motorpin[5]), "motor", PinState.LOW);
+        motor_IO[6] = gpio.provisionDigitalOutputPin(RaspiPin.getPinByName(motorpin[6]), "motor", PinState.LOW);
         
         // provision gpio pin #01 as an output pin and turn on
         //final GpioPinDigitalOutput motor = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_21, "motor", PinState.LOW);
@@ -337,10 +351,10 @@ public class BarBotGuiTest extends javax.swing.JFrame {
         IngrediantPanelLayout.setVerticalGroup(
             IngrediantPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(IngrediantPanelLayout.createSequentialGroup()
-                .addGroup(IngrediantPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(IngrediantFrameLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(IngrediantOzLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(IngrediantPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(IngrediantFrameLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(IngrediantOzLbl))
+                .addGap(16, 16, 16)
                 .addGroup(IngrediantPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Ingrediant1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(IngOz1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -490,12 +504,12 @@ public class BarBotGuiTest extends javax.swing.JFrame {
                 partsOfRecipe = curDrinkRecipe.split(":");
                 JOptionPane.showMessageDialog(null, "Prepare glass for " + partsOfRecipe[0]);
                 for(int i = 1; i < partsOfRecipe.length; i++)   {
-                    for(int j = 0; j < 5; j++){
+                    for(int j = 0; j < 7; j++){
                         String[] aPart = partsOfRecipe[i].split(";");
                             if(aPart[0].equalsIgnoreCase(ingrediants[j])){
                                 drinkStatus.setText("Pouring " + partsOfRecipe[0]);
-                                motors[i] = new MotorThread(this, motorpin[j],(long)(Float.parseFloat(aPart[1])/.000056),gpio,motor[j]);
-                                motors[i].start();
+                                motorThrdAry[i] = new MotorThread(this, motorpin[j],(long)(Float.parseFloat(aPart[1])/.000056),gpio,motor_IO[j]);
+                                motorThrdAry[i].start();
                             }
                         }
                     }
@@ -529,6 +543,10 @@ public class BarBotGuiTest extends javax.swing.JFrame {
                         IngOz4.setText("0.0");
                         Ingrediant5.setText("__________");
                         IngOz5.setText("0.0");
+//                        Ingrediant6.setText("__________");
+//                        IngOz6.setText("0.0");
+//                        Ingrediant6.setText("__________");
+//                        IngOz6.setText("0.0");
                     break;
                 case 1:
                     if((drinkParts == null) || (drinkParts[0].isEmpty())) {
@@ -705,8 +723,8 @@ public class BarBotGuiTest extends javax.swing.JFrame {
         }
         else{
             for(int i =0; i < 5; i++)    {
-                if((motors[i] != null) && (motors[i] != child)){
-                    if(motors[i].isAlive()){
+                if((motorThrdAry[i] != null) && (motorThrdAry[i] != child)){
+                    if(motorThrdAry[i].isAlive()){
                         return;
                     }
                 } 

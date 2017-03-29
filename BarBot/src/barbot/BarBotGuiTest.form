@@ -262,11 +262,11 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="IngrediantFrameLbl" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
-                          <Component id="IngrediantOzLbl" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="IngrediantFrameLbl" min="-2" pref="27" max="-2" attributes="0"/>
+                          <Component id="IngrediantOzLbl" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="Ingrediant1" linkSize="10" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
                           <Component id="IngOz1" linkSize="10" alignment="3" min="-2" max="-2" attributes="0"/>
