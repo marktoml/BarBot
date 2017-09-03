@@ -33,10 +33,14 @@ BarBotGuiTest myMain;
        motor = Motor;
        myMain = Main;  
     }
-     protected void finalize() {
+@Override
+     protected void finalize() throws Throwable {
+         //var
+        super.finalize();
          //var
          
      }
+@Override
      public void run(){
          //code
          // create gpio controller

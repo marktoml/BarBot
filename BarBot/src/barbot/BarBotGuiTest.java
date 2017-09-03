@@ -11,6 +11,7 @@ import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.HeadlessException;
 import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -38,6 +39,8 @@ import javax.swing.JOptionPane;
  * @author john
  */
 public class BarBotGuiTest extends javax.swing.JFrame {
+
+    private static final long serialVersionUID = 1L;
     
     Properties properties = new Properties();
     MotorThread[] motorThrdAry = new MotorThread[7];
@@ -50,6 +53,7 @@ public class BarBotGuiTest extends javax.swing.JFrame {
     String[] drinkSelected;
     String[] drinkParts;
     int activeIngredient = 0;
+    long motorCalc = 18000;
     
     GpioController gpio;
     GpioPinDigitalOutput[] motor_IO = new GpioPinDigitalOutput[7];
@@ -103,6 +107,8 @@ public class BarBotGuiTest extends javax.swing.JFrame {
             motorpin[6] = "GPIO 29";
             properties.setProperty("motor7pin", motorpin[6]);
         }
+        
+        motorCalc = Long.valueOf(properties.getProperty("motor_calc"));
         
         ingrediants[0] = properties.getProperty("ingrediant1");
         ingrediants[1] = properties.getProperty("ingrediant2");
@@ -508,7 +514,17 @@ public class BarBotGuiTest extends javax.swing.JFrame {
                         String[] aPart = partsOfRecipe[i].split(";");
                             if(aPart[0].equalsIgnoreCase(ingrediants[j])){
                                 drinkStatus.setText("Pouring " + partsOfRecipe[0]);
-                                motorThrdAry[i] = new MotorThread(this, motorpin[j],(long)(Float.parseFloat(aPart[1])/.000056),gpio,motor_IO[j]);
+                                /* 
+                                * MotorThread( 
+                                *               this,                                       --> a copy of this current class
+                                *               motorpin[j],                                --> which motor to run
+                                *               (long)(Float.parseFloat(aPart[1])/.000056), --> an explicit length of time in milliseconds (see below)
+                                *               gpio,                                       --> Pi4J GPIO Controller object
+                                *               motor_IO[j]                                 --> which GpioPinDigitalOutput to use
+                                *               );
+                                *
+                                */
+                                motorThrdAry[i] = new MotorThread(this, motorpin[j],(long)(Float.parseFloat(aPart[1])/(1/motorCalc)),gpio,motor_IO[j]);
                                 motorThrdAry[i].start();
                             }
                         }
@@ -516,7 +532,7 @@ public class BarBotGuiTest extends javax.swing.JFrame {
             }
             PlaceOrderButton.setEnabled(true);  
             MakeDrinksButton.setEnabled(false);
-        } catch(Exception e)    {
+        } catch(HeadlessException | NumberFormatException e)    {
             java.util.logging.Logger.getLogger(BarBotGuiTest.class.getName()).log(java.util.logging.Level.SEVERE, null, e);  
             PlaceOrderButton.setEnabled(true); 
             if(drinkQ.isEmpty())   {
